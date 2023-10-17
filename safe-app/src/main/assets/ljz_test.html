@@ -1,0 +1,24 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
+    <script type="text/javascript">
+function javacalljs(){
+	 document.getElementById("content").innerHTML +=
+         "<br\>"+"java调用了js函数";
+}
+
+function javacalljswithargs(arg){
+	 document.getElementById("content").innerHTML +=
+         ("<br\>"+arg);
+}
+
+    </script>
+</head>
+<body>
+this is my html <br/>
+<a onClick="window.JSAction.callNative()">Click here call java code</a><br/>
+<a onClick="window.JSAction.callNative('Hello World!')">Call java native code with params!</a>
+<br/>
+<div id="content">Here display the content</div>
+</body>
+</html>
