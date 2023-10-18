@@ -1,2 +1,3 @@
 rootProject.name = "SafeStudy"
 include ':safe-app'
+include ':date_time_picker'

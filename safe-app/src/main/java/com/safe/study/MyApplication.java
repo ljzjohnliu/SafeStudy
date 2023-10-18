@@ -24,7 +24,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         // LeakCanary创建
-        refWatcher = setupLeakCanary();
+//        refWatcher = setupLeakCanary();
         instance = this;
         TooLargeTool.startLogging(this);
         Log.d(TAG, "MyApplication, onCreate: ---------------" + Utils.getPids());

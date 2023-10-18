@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <com.loper7.layout.TitleBar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:tBackImage="@drawable/ic_action_back"
+        app:tTitleText="设置定时任务" />
+
+    <TextView
+        android:id="@+id/btnCardDialogShow"
+        android:layout_width="300dp"
+        android:layout_height="43dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_button_bg"
+        android:drawablePadding="10dp"
+        android:drawableTint="#333333"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="添加定时关机任务"
+        android:textColor="#333333"
+        android:textSize="16sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        />
+</LinearLayout>

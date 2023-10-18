@@ -21,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.safe.study.activity.DatePickerActivity" />
+        <activity android:name="com.safe.study.activity.SetTaskActivity" />
+        <activity android:name="com.safe.study.activity.GoodbyeActivity" />
+
+        <service android:name="com.safe.study.service.MyService" />
     </application>
 
 </manifest>

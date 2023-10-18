@@ -18,13 +18,12 @@ public class MainActivity extends BaseSimpleActivity {
     @BindView(R.id.title_tv)
     TextView titleTv;
 
-    @OnClick({R.id.test_thread_updateui})
+    @OnClick({R.id.set_task})
     public void onJumpClick(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
-            case R.id.test_thread_updateui:
-                // 此方法不能实现跨应用调用
-//                intent.setClass(this, ActivityA.class);
+            case R.id.set_task:
+                intent.setClass(this, SetTaskActivity.class);
                 break;
         }
         startActivity(intent);
