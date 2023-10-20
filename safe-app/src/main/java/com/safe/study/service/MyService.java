@@ -1,10 +1,11 @@
 package com.safe.study.service;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +17,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.safe.study.activity.GoodbyeActivity;
+import com.safe.study.receiver.AdminReceiver;
 
 import java.util.Calendar;
 
@@ -38,17 +40,19 @@ public class MyService extends Service {
      **/
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: intent = " + intent);
         long taskTime = intent.getLongExtra("task_time", 0L);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent alarmIntent = new Intent();
         alarmIntent.setAction(TEST_ACTION);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
 
-        Log.d(TAG, "onHandleIntent: taskTime = " + taskTime + ", triggerAtMillis = " + (taskTime - Calendar.getInstance().getTimeInMillis()));
+        Log.d(TAG, "onStartCommand: taskTime = " + taskTime + ", triggerAtMillis = " + (taskTime - Calendar.getInstance().getTimeInMillis()));
 
         if (taskTime > 0) {
             long timeInterval = taskTime - Calendar.getInstance().getTimeInMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//6.0低电量模式需要使用该方法触发定时任务
+//                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeInterval, pendingIntent);
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeInterval, pendingIntent);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4以上 需要使用该方法精确执行时间
                 alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeInterval, pendingIntent);
@@ -72,6 +76,15 @@ public class MyService extends Service {
     }
 
     public static final String TEST_ACTION = "com.safe.study" + "_TASK_ACTION";
+    private ComponentName componentName;
+
+    private void activeManager() {
+        //使用隐式意图调用系统方法来激活指定的设备管理器
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "一键锁屏");
+        startActivity(intent);
+    }
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -81,6 +94,24 @@ public class MyService extends Service {
             Intent byeIntent = new Intent(context, GoodbyeActivity.class);
             byeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(byeIntent);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    DevicePolicyManager dpm = (DevicePolicyManager)
+                            getSystemService(Context.DEVICE_POLICY_SERVICE);
+                    componentName = new ComponentName(getApplicationContext(),
+                            AdminReceiver.class);
+                    Log.d(TAG, "onReceive: -------isAdminActive = " + dpm.isAdminActive(componentName));
+                    if (dpm.isAdminActive(componentName)) {//判断是否有权限(激活了设备管理器)
+                        dpm.lockNow();// 直接锁屏
+                        //杀死当前应用
+//                    Process.killProcess(Process.myPid());
+                    } else {
+                        activeManager();//激活设备管理器获取权限
+                    }
+                }
+            }).start();
 //            if (TEST_ACTION.equals(action)) {
 //                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + TIME_INTERVAL, pendingIntent);
