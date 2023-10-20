@@ -84,6 +84,7 @@ class SetTaskActivity : BaseSimpleActivity() {
 //                .setDividerColor(Color.parseColor("#222222"))
                 .showDateLabel(true)//显示单位
                 .showFocusDateInfo(true)//显示日期信息
+                .setDisplayType(mutableListOf<Int>(DateTimeConfig.DAY,DateTimeConfig.HOUR,DateTimeConfig.MIN))
                 .setOnChoose("选择") {
                     Log.d("SetTaskActivity", "onChooseListener: time is = " + it)
                     var intent = Intent(this, MyService::class.java)
